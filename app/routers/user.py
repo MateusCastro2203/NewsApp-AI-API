@@ -1,10 +1,12 @@
 import uuid
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
+import sentry_sdk
 from app.database.mongo import db
 import logging
 from fastapi.responses import JSONResponse
 from bson import ObjectId
+from app.services.logger import logger
 
 router = APIRouter()
 
@@ -17,8 +19,16 @@ class User(BaseModel):
     name: str
     email: str
 
+request_id =  getattr(Request.state, "request_id", str(uuid.uuid4()))
+
 @router.post("/user")
 async def create_user(userCreate: UserCreate):
+
+    logger.info(
+        f"Tentativa de criação de usuário com email: {userCreate.email}",
+        extra={"request_id": request_id, "email": userCreate.email}
+    )
+    
     try:
         # Gerar um ID único para o usuário
         user_id = str(uuid.uuid4())
@@ -59,13 +69,16 @@ async def create_user(userCreate: UserCreate):
             detail="Serviço de banco de dados indisponível. Tente novamente mais tarde."
         )
     except Exception as e:
-        # Log detalhado para depuração
-        logging.error(f"Erro ao criar usuário: {str(e)}", exc_info=True)
+       
+        logger.error(
+            f"Erro ao criar usuário: {str(e)}",
+            extra={"request_id": request_id, "email": userCreate.email},
+            exc_info=True
+        )
         
-        # Resposta genérica para o cliente
         raise HTTPException(
             status_code=500,
-            detail="Ocorreu um erro ao processar sua solicitação. Entre em contato com o suporte."
+            detail="Ocorreu um erro ao processar sua solicitação."
         )
     
     
@@ -75,7 +88,7 @@ async def get_user(email: str):
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     
-    # Converter ObjectId para string antes de retornar
+   
     if "_id" in user:
         user["_id"] = str(user["_id"])
     

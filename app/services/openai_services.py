@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # colocar a lib async da openai
-# criar uma nova colections de messages no mongo para ele persistir as mensagens da conversa
+
 
 
 
