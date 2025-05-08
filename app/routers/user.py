@@ -19,13 +19,15 @@ async def create_user(userCreate: UserCreate):
     user_id = str(uuid.uuid4())
     user_data = userCreate.model_dump()
     user_data["user_id"] = user_id
+    response = str
     try:
         if await db["users"].find_one({"email": userCreate.email}):
+            response = {"message": "Usuário já existe", "data": user_data}
             return {"message": "Usuário já existe", "data": user_data}
         await db["users"].insert_one(user_data)
         return {"message": "Usuário criado com sucesso", "data": user_data}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(response,e.message))
     
 @router.get("/user/{email}")
 async def get_user(email: str):
