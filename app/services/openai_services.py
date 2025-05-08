@@ -14,7 +14,16 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 def get_ai_response( messages) -> str:
    
     response =  client.chat.completions.create(
-        model="gpt-3.5-turbo",  # ou outro modelo disponível
+        model="gpt-4o",  # ou outro modelo disponível
         messages=messages
     )
     return response.choices[0].message.content
+
+async def call_openai_with_tools(messages, tools):
+    response = client.chat.completions.create(
+        model="gpt-4o",  # ou outro modelo compatível com tools
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
+    )
+    return response

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from app.routers import chat, user, favorites
 from app.services.logger import LoggerMiddleware
 import os
@@ -16,7 +17,7 @@ app.include_router(favorites.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "NewsBot API is running!"}
+    return RedirectResponse(url="/docs")
 
 if __name__ == "__main__":
     import uvicorn
