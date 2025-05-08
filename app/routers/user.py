@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from app.database.mongo import db
 import logging
 from fastapi.responses import JSONResponse
+from bson import ObjectId
 
 router = APIRouter()
 
@@ -29,17 +30,24 @@ async def create_user(userCreate: UserCreate):
         # Verificar se já existe um usuário com o mesmo email
         existing_user = await db["users"].find_one({"email": userCreate.email})
         if existing_user:
-            user_data = await db["users"].find_one({"email": userCreate.email})
+            # Convertendo ObjectId para string e criando um novo dicionário sem _id
+            user_dict = {
+                "user_id": existing_user.get("user_id", ""),
+                "email": existing_user.get("email", ""),
+                "name": existing_user.get("name", "")
+            }
+            
             return JSONResponse(
                 status_code=200,
-                content={"message": "Usuário já cadastrado", "data": {"user_id": user_data["user_id"]}}
+                content={"message": "Usuário já cadastrado", "data": {"user_id": user_dict["user_id"]}}
             )
         
         # Inserir o novo usuário no banco de dados
         await db["users"].insert_one(user_data)
         
-        # Remover a senha (se existir) antes de retornar
-
+        # Certifique-se de que não há _id no dict que será retornado
+        if "_id" in user_data:
+            del user_data["_id"]
             
         return {"message": "Usuário criado com sucesso", "data": user_data}
         
@@ -65,6 +73,11 @@ async def get_user(email: str):
     user = await db["users"].find_one({"email": email})
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    # Converter ObjectId para string antes de retornar
+    if "_id" in user:
+        user["_id"] = str(user["_id"])
+    
     return user
 
 
