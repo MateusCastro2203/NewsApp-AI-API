@@ -1,11 +1,9 @@
 import logging
 import json
-
 import time
 
-
 class JsonFormatter(logging.Formatter):
-    def format(self, record):
+     def format(self, record):
         log_data = {
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
             "level": record.levelname,

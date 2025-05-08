@@ -1,12 +1,11 @@
 import time
 import uuid
-from fastapi import FastAPI, Request
-from fastapi.middleware import Middleware
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.core.logger import logger
 
 class LoggerMiddleware(BaseHTTPMiddleware):
-    async def log_request(request: Request, call_next):
+    async def dispatch(self, request: Request, call_next):
         request_id = str(uuid.uuid4())
         logger.info(
             f"Iniciando requisição {request_id}", 
