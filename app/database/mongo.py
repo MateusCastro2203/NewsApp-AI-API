@@ -1,17 +1,27 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
-mongo_url = os.getenv("MONGO_URL")
-if mongo_url and "mongodb+srv" in mongo_url:
-    # Adicione parâmetros TLS se não existirem já na URL
-    if "?" in mongo_url:
-        if "&tls=true" not in mongo_url and "&tlsInsecure=false" not in mongo_url:
-            mongo_url += "&tls=true&tlsAllowInvalidCertificates=false"
-    else:
-        mongo_url += "?tls=true&tlsAllowInvalidCertificates=false"
+logger = logging.getLogger("newsbot")
 
-client = AsyncIOMotorClient(mongo_url)
-db = client["newsbot"]
+
+try:
+    MONGO_URL = os.getenv("MONGO_URL")
+    logger.info(f"Conectando ao MongoDB...")
+    client = AsyncIOMotorClient(
+        MONGO_URL, 
+        serverSelectionTimeoutMS=5000,
+        socketTimeoutMS=10000,
+    )
+    db = client["newsbot"]
+    logger.info("Conexão com MongoDB estabelecida com sucesso")
+
+
+except Exception as e:
+    logger.error(f"Erro ao conectar ao MongoDB: {e}")
+    db = None
+    raise e
+
