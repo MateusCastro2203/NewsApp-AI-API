@@ -12,7 +12,7 @@ try:
     MONGO_URL = os.getenv("MONGO_URL")
     logger.info(f"Conectando ao MongoDB...")
     client = AsyncIOMotorClient(
-        MONGO_URL, 
+        MONGO_URL,
         serverSelectionTimeoutMS=5000,
         socketTimeoutMS=10000,
     )
