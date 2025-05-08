@@ -6,8 +6,6 @@ import os
 openai_api_key = os.getenv("OPENAI_API_KEY")
 mongodb_url = os.getenv("MONGODB_URL")
 
-
-
 app = FastAPI(middleware=[logger_middleware])
 
 

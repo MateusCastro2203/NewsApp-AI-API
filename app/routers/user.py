@@ -1,11 +1,9 @@
 import uuid
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
-import sentry_sdk
 from app.database.mongo import db
 import logging
 from fastapi.responses import JSONResponse
-from bson import ObjectId
 from app.services.logger import logger
 
 router = APIRouter()
