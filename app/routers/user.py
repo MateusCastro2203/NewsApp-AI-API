@@ -68,6 +68,7 @@ async def create_user(userCreate: UserCreate):
             detail="Ocorreu um erro ao processar sua solicitação. Entre em contato com o suporte."
         )
     
+    
 @router.get("/user/{email}")
 async def get_user(email: str):
     user = await db["users"].find_one({"email": email})
