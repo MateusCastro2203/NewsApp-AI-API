@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from app.database.mongo import db
 import logging
 from fastapi.responses import JSONResponse
-from app.services.logger import logger
+from app.services.log.logger import logger
 
 router = APIRouter()
 
