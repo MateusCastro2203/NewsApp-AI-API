@@ -37,3 +37,15 @@ class NewsRequest(BaseModel):
     class Config:
         from_attributes = True
     
+class NewsItem(BaseModel):
+    id: str  # ID único da notícia
+    title: str  # Título
+    description: Optional[str] = None  # Descrição curta
+    content: Optional[str] = None  # Conteúdo completo, quando disponível
+    url: str  # Link para a notícia
+    source_name: str  # Nome da fonte (ex: "G1", "CNN", etc)
+    source_url: Optional[str] = None  # URL da fonte
+    image_url: Optional[str] = None  # URL da imagem principal
+    published_at: Optional[datetime] = None  # Data de publicação
+    category: Optional[List[str]] = None  # Categorias
+    source_type: str = Field(..., description="'api' para notícias da API, 'web' para buscas na web")
