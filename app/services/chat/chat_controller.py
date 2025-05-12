@@ -34,16 +34,25 @@ async def chat(request):
                         "arguments": json.dumps({"query": tool_call.function.arguments})
                     }
                 }
-                web_restult = await search_web(web_tool_call)
+                web_result = await search_web(web_tool_call)
                 return {
                     "response": ai_response,
                     "conversation_id": conversation_id,
-                    "web_result": web_restult
+                    "web_result": web_result
                 }
             return {
                 "response": ai_response,
                 "conversation_id": conversation_id,
                 "news": news
+            }
+        # Verifica se a IA quer usar diretamente a tool search_web
+        elif has_tool_call(assistant_message, "search_web"):
+            tool_call = find_tool_call(assistant_message, "search_web")
+            web_result = await search_web(tool_call)
+            return {
+                "response": ai_response,
+                "conversation_id": conversation_id,
+                "web_result": web_result
             }
         
         # Fluxo normal (sem uso de tools)
