@@ -4,6 +4,7 @@ from fastapi.responses import RedirectResponse
 
 from app.routers import chat, news, user, favorites
 from app.services.log.logger import LoggerMiddleware
+from fastapi.middleware.cors import CORSMiddleware 
 
 
 import os
@@ -16,6 +17,17 @@ app = FastAPI(
     description="API para chat, notícias, usuários e favoritos",
     version="1.0.0"
 )
+
+# Configuração do CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Substitua por uma lista de origens permitidas em produção
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos, incluindo OPTIONS
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
+
+app.add_middleware(LoggerMiddleware)
 
 
 app.include_router(chat.router,  tags=["Chat"])

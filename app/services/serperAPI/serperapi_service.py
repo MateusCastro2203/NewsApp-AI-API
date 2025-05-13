@@ -7,7 +7,6 @@ import httpx
 import asyncio
 
 from app.models.news import NewsItem
-from app.services.news.news_services import format_api_news
 from app.core.utils.get_news_image import get_main_image_from_url
 
 load_dotenv()

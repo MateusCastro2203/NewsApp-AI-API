@@ -57,6 +57,7 @@ async def fetch_news_with_category(category: List[str]) -> List[NewsRequest]:
 async def fetch_news_with_query(query: str) -> List[NewsRequest]:
     try:
         base_url = os.getenv("NEWS_API_URL")
+        
         params = {
             "q": query,
             "language": "pt",
