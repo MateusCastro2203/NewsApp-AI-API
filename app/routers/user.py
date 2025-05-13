@@ -17,15 +17,22 @@ class User(BaseModel):
     name: str
     email: str
 
-request_id =  getattr(Request.state, "request_id", str(uuid.uuid4()))
+
 
 @router.post("/user")
-async def create_user(userCreate: UserCreate):
+async def create_user(userCreate: UserCreate, request: Request):
+    request_id =  getattr(Request.state, "request_id", str(uuid.uuid4()))
 
     logger.info(
         f"Tentativa de criação de usuário com email: {userCreate.email}",
-        extra={"request_id": request_id, "email": userCreate.email}
-    )
+        extra={
+            "request_id": request_id,
+            "email": userCreate.email,
+            "method": request.method,
+            "path": request.url.path,
+            "headers": dict(request.headers)
+        }
+        )
     
     try:
         # Gerar um ID único para o usuário
