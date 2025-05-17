@@ -1,6 +1,7 @@
 import json
 
 from fastapi import logger
+from app.services.favoritesNews.favorites_services import get_news_for_favorites_db
 from app.services.news.news_services import fetch_news_with_query
 from app.services.openAi.openai_services import call_openai_with_parameters_search_web
 from app.services.serperAPI.serperapi_service import search_web_serper
@@ -38,6 +39,23 @@ def define_tools():
                         }
                     },
                     "required": ["query"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "get_news_for_favorites",
+                "description": "Busca notícias favoritas do usuário no banco de dados",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "user_id": {
+                            "type": "string", 
+                            "description": "ID do usuário para buscar as noticias favoritas"
+                            }
+                    },
+                    "required": ["user_id"]
                 }
             }
         }
@@ -106,3 +124,7 @@ async def search_web(tool_call):
     return result
 
 
+async def get_news_for_favorites(tool_call):
+    params = get_tool_call_arguments(tool_call)
+    result = await get_news_for_favorites_db(params["user_id"])
+    return result

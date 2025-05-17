@@ -49,3 +49,9 @@ class NewsItem(BaseModel):
     published_at: Optional[datetime] = None  # Data de publicação
     category: Optional[List[str]] = None  # Categorias
     source_type: str = Field(..., description="'api' para notícias da API, 'web' para buscas na web")
+
+    class Config:
+        from_attributes = True
+        json_encoders = {
+            datetime: lambda v: v.isoformat() if v else None
+        }
